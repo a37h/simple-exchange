@@ -43,11 +43,11 @@ data class Limit(val arrivalIndex: Int, val orderId: String, val price: Int, var
 
 class OrderBook {
 
-    val bids = TreeSet(compareByDescending<Limit> { it.price }.thenBy { it.arrivalIndex })
-    val asks = TreeSet(compareBy<Limit> { it.price }.thenBy { it.arrivalIndex })
+    private val bids = TreeSet(compareByDescending<Limit> { it.price }.thenBy { it.arrivalIndex })
+    private val asks = TreeSet(compareBy<Limit> { it.price }.thenBy { it.arrivalIndex })
 
     // arrivalIndex - represents order arrival chronology for matching orders in price time priority
-    var arrivalIndex = 0
+    private var arrivalIndex = 0
 
     fun routeOrder(o: Order) {
         arrivalIndex += 1
@@ -74,24 +74,25 @@ class OrderBook {
                 bestOffer.quantity -= matchedQuantity
                 currentOrder.quantity -= matchedQuantity
 
-                // should we remove bestOffer?
+                // Remove bestOffer if it was filled
                 if (bestOffer.quantity == 0) {
                     matchingSide.remove(bestOffer)
                 }
 
-                // We should stop if we've filled current order completely
+                // Stop if the currentOrder was filled
                 if (currentOrder.quantity == 0) {
                     return
                 }
 
-                // We should stop if Asks is empty
+                // Stop if Asks is empty
                 if (matchingSide.size == 0) {
                     restingSide.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity))
                     return
                 }
 
-                // We can continue aggressive matching
+                // Continue aggressive matching
             } else {
+                // Couldn't find a matching price in Asks, resting the currentOrder
                 restingSide.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity))
                 return
             }
