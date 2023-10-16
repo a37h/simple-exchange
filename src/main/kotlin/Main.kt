@@ -49,34 +49,34 @@ class OrderBook {
     // arrivalIndex - represents order arrival chronology for matching orders in price time priority
     var arrivalIndex = 0
 
-    fun processOrder(o: Order) {
+    fun routeOrder(o: Order) {
         arrivalIndex += 1
         if (o.side == 'B') {
-            processBuyOrder(o)
+            processOrder(o, asks, bids) { a, b -> a <= b }
         } else {
-            processSellOrder(o)
+            processOrder(o, bids, asks) { a, b -> a >= b }
         }
     }
 
     // Buy order is first considered for aggressive matching against the Asks.
     // Once this is completed, any remaining order quantity will rest on the Bids side of the book.
-    private fun processBuyOrder(currentOrder: Order) {
-        if (asks.size == 0) {
-            bids.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity))
+    private fun processOrder(currentOrder: Order, matchingSide: TreeSet<Limit>, restingSide: TreeSet<Limit>, priceCondition: (Int, Int) -> Boolean) {
+        if (matchingSide.size == 0) {
+            restingSide.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity))
             return
         }
 
-        while (asks.size > 0) {
-            val bestOffer = asks.first() // 500 @ 100
+        while (matchingSide.size > 0) {
+            val bestOffer = matchingSide.first()
 
-            if (bestOffer.price <= currentOrder.price) {
+            if (priceCondition(bestOffer.price, currentOrder.price)) {
                 val matchedQuantity = min(bestOffer.quantity, currentOrder.quantity) // min(500, 1000) = 500
                 bestOffer.quantity -= matchedQuantity
                 currentOrder.quantity -= matchedQuantity
 
                 // should we remove bestOffer?
                 if (bestOffer.quantity == 0) {
-                    asks.remove(bestOffer)
+                    matchingSide.remove(bestOffer)
                 }
 
                 // We should stop if we've filled current order completely
@@ -85,19 +85,18 @@ class OrderBook {
                 }
 
                 // We should stop if Asks is empty
-                if (asks.size == 0) {
-                    bids.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity))
+                if (matchingSide.size == 0) {
+                    restingSide.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity))
                     return
                 }
 
                 // We can continue aggressive matching
             } else {
-                bids.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity))
+                restingSide.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity))
                 return
             }
         }
     }
-    private fun processSellOrder(o: Order) {}
 
     override fun toString(): String {
         var result = "---------------------------------\n"
@@ -131,7 +130,7 @@ fun main() {
 
     while (inputString != null) {
         val order = parseOrder(inputString)
-        orderBook.processOrder(order)
+        orderBook.routeOrder(order)
         inputString = readlnOrNull()
     }
 
