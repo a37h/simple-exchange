@@ -24,7 +24,7 @@ class OrderBook {
     // Once this is completed, any remaining order quantity will rest on the Bids side of the book.
     private fun processOrder(currentOrder: Order, matchingSide: TreeSet<Limit>, restingSide: TreeSet<Limit>, priceCondition: (Int, Int) -> Boolean) {
         if (matchingSide.size == 0) {
-            restingSide.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity))
+            restingSide.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity, currentOrder.side))
             return
         }
 
@@ -48,14 +48,14 @@ class OrderBook {
 
                 // Stop if Asks is empty
                 if (matchingSide.size == 0) {
-                    restingSide.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity))
+                    restingSide.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity, currentOrder.side))
                     return
                 }
 
                 // Continue aggressive matching
             } else {
                 // Couldn't find a matching price in Asks, resting the currentOrder
-                restingSide.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity))
+                restingSide.add(Limit(arrivalIndex, currentOrder.orderId, currentOrder.price, currentOrder.quantity, currentOrder.side))
                 return
             }
         }
@@ -73,6 +73,7 @@ class OrderBook {
         }
         while (iteratorBids.hasNext()) {
             val bid = iteratorBids.next()
+            // result += "$bid | ${" ".repeat(Limit.EMPTY_PADDING_LENGTH)}\n"
             result += "$bid |\n"
         }
         while (iteratorAsks.hasNext()) {

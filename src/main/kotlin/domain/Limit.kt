@@ -1,6 +1,6 @@
 package domain
 
-data class Limit(val arrivalIndex: Int, val orderId: String, val price: Int, var quantity: Int) {
+data class Limit(val arrivalIndex: Int, val orderId: String, val price: Int, var quantity: Int, var side: Char) {
     companion object {
         const val QUANTITY_FORMAT_LENGTH = 11
         const val PRICE_FORMAT_LENGTH = 6
@@ -20,6 +20,10 @@ data class Limit(val arrivalIndex: Int, val orderId: String, val price: Int, var
     }
 
     override fun toString(): String {
-        return "${formatPrice(price)} ${formatQuantity(quantity)}"
+        return if (side == 'B') {
+            "${formatQuantity(quantity)} ${formatPrice(price)}"
+        } else {
+            "${formatPrice(price)} ${formatQuantity(quantity)}"
+        }
     }
 }
