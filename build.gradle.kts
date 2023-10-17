@@ -18,6 +18,18 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.getByName<JavaExec>("run") {
+    standardInput = System.`in`
+}
+
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "MainKt"
+    }
+    from(configurations.compileClasspath.map { config -> config.map { if (it.isDirectory) it else zipTree(it) } })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 kotlin {
     jvmToolchain(8)
 }

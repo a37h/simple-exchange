@@ -4,6 +4,7 @@ data class Limit(val arrivalIndex: Int, val orderId: String, val price: Int, var
     companion object {
         const val QUANTITY_FORMAT_LENGTH = 11
         const val PRICE_FORMAT_LENGTH = 6
+        const val EMPTY_PADDING_LENGTH = 18
     }
 
     private fun formatQuantity(q: Int): String {

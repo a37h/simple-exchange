@@ -62,8 +62,7 @@ class OrderBook {
     }
 
     override fun toString(): String {
-        var result = "---------------------------------\n"
-
+        var result = ""
         val iteratorBids = bids.iterator()
         val iteratorAsks = asks.iterator()
 
@@ -78,10 +77,9 @@ class OrderBook {
         }
         while (iteratorAsks.hasNext()) {
             val ask = iteratorAsks.next()
-            result += "${" ".repeat(18)} | $ask\n"
+            result += "${" ".repeat(Limit.EMPTY_PADDING_LENGTH)} | $ask\n"
         }
 
-        result += "---------------------------------\n"
         return result
     }
 }
