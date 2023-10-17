@@ -35,6 +35,7 @@ class OrderBook {
                 val matchedQuantity = min(bestOffer.quantity, currentOrder.quantity) // min(500, 1000) = 500
                 bestOffer.quantity -= matchedQuantity
                 currentOrder.quantity -= matchedQuantity
+                println("trade ${currentOrder.orderId},${bestOffer.orderId},${bestOffer.price},$matchedQuantity")
 
                 // Remove bestOffer if it was filled
                 if (bestOffer.quantity == 0) {
@@ -73,8 +74,7 @@ class OrderBook {
         }
         while (iteratorBids.hasNext()) {
             val bid = iteratorBids.next()
-            // result += "$bid | ${" ".repeat(Limit.EMPTY_PADDING_LENGTH)}\n"
-            result += "$bid |\n"
+             result += "$bid | ${" ".repeat(Limit.EMPTY_PADDING_LENGTH)}\n"
         }
         while (iteratorAsks.hasNext()) {
             val ask = iteratorAsks.next()
