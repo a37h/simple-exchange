@@ -1,4 +1,5 @@
-import domain.Order
+package domain
+
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

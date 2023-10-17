@@ -7,13 +7,13 @@ data class Limit(val arrivalIndex: Int, val orderId: String, val price: Int, var
         const val EMPTY_PADDING_LENGTH = 18
     }
 
-    private fun formatQuantity(q: Int): String {
+    fun formatQuantity(q: Int): String {
         val number = String.format("%,d", q)
         val padding = " ".repeat(QUANTITY_FORMAT_LENGTH -number.length)
         return padding + number
     }
 
-    private fun formatPrice(p: Int): String {
+    fun formatPrice(p: Int): String {
         val number = p.toString()
         val padding = " ".repeat(PRICE_FORMAT_LENGTH -number.length)
         return padding + number
