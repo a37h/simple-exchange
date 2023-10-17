@@ -32,10 +32,10 @@ class OrderBook {
             val bestOffer = matchingSide.first()
 
             if (priceCondition(bestOffer.price, currentOrder.price)) {
-                val matchedQuantity = min(bestOffer.quantity, currentOrder.quantity) // min(500, 1000) = 500
-                bestOffer.quantity -= matchedQuantity
-                currentOrder.quantity -= matchedQuantity
-                printTrade(currentOrder, bestOffer, matchedQuantity)
+                val tradedQuantity = min(bestOffer.quantity, currentOrder.quantity) // min(500, 1000) = 500
+                bestOffer.quantity -= tradedQuantity
+                currentOrder.quantity -= tradedQuantity
+                printTrade(currentOrder, bestOffer, tradedQuantity)
 
                 // Remove bestOffer if it was filled
                 if (bestOffer.quantity == 0) {
