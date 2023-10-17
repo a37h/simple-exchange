@@ -35,7 +35,7 @@ class OrderBook {
                 val matchedQuantity = min(bestOffer.quantity, currentOrder.quantity) // min(500, 1000) = 500
                 bestOffer.quantity -= matchedQuantity
                 currentOrder.quantity -= matchedQuantity
-                println("trade ${currentOrder.orderId},${bestOffer.orderId},${bestOffer.price},$matchedQuantity")
+                printTrade(currentOrder, bestOffer, matchedQuantity)
 
                 // Remove bestOffer if it was filled
                 if (bestOffer.quantity == 0) {
@@ -82,5 +82,9 @@ class OrderBook {
         }
 
         return result
+    }
+
+    private fun printTrade(currentOrder: Order, bestOffer: Limit, matchedQuantity: Int) {
+        println("trade ${currentOrder.orderId},${bestOffer.orderId},${bestOffer.price},$matchedQuantity")
     }
 }
